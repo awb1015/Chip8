@@ -22,12 +22,16 @@ public class GameLoop {
 			
 			//Check for draw flag
 			if(myChip8.drawFlag()){
-				//Draw Graphics
+				drawGraphics();
 			}
 			
 			//Check for inputs
 			myChip8.setKeys();
 		}
+	}
+	
+	public static void drawGraphics(){
+		
 	}
 
 }

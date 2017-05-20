@@ -50,15 +50,39 @@ public class CPU {
 		//Just check the first four bits for our cases
 		switch(opcode & 0xF000){
 		
+		case 0x2000: //2NNN This calls the subroutine at NNN
+			//Store our current state in the stack
+			stack[sp] = pc;
+			++sp;
+			pc = (short) (opcode & 0x0FFF);
+		break;
+		
 		case 0xA000: //ANNN Sets I to the address NNN
 			I = (short) (opcode & 0x0FFF);
 			//Increase program counter to next pair of 2 bits
 			pc += 2;
 		break;
 		
+		case 0x0000:
+			//Now we need to compare the last four bits
+			switch (opcode & 0x000F)
+			{
+				//This case below has a last 4 bits of 0 and first four of zero
+				case 0x0000: // 0x00E0: Clear Screen
+					//Something here to clear the screen
+				break;
 				
+				case 0x000E: // 0x00EE : Returns from subroutine
+					//Execute opcode
+					//We need to restore address value from the stack then reduce the stack pointer
+					//Then set the program counter to the correct value
+				break;
+				
+				default:
+					System.out.println("Unknown Opcode [0x0000]: 0x" + opcode);
+			}
 		
-		
+						
 		default:
 			System.out.println("Unknown OpCode at 0x" + opcode);
 		
