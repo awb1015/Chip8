@@ -21,7 +21,7 @@ public class GameLoop {
 			myChip8.emulateCycle();
 			
 			//Check for draw flag
-			if(myChip8.drawFlag()){
+			if(myChip8.getDrawFlag()){
 				drawGraphics();
 			}
 			
