@@ -41,7 +41,7 @@ public class CPU {
 		opcode = (short) (memory[pc] << 8 | memory[pc+1]);
 
 		//Decode Opcode & Execute Opcode
-		//At the moment this is set-up as a case structure perhaps a hashtable is better?
+		//At the moment this is set-up as a case structure perhaps a better way?
 		//Just check the first four bits for our cases
 		switch(opcode & 0xF000){
 
@@ -89,7 +89,8 @@ public class CPU {
 			break;
 
 		case 0x7000: //7XNN Adds NN to Vx
-			V[((opcode & 0x0F00)>>8)] = (char)((V[((opcode & 0x0F00)>>8)]) + (char)(opcode & 0x00FF));		
+			V[((opcode & 0x0F00)>>8)] = (char)((V[((opcode & 0x0F00)>>8)]) + (char)(opcode & 0x00FF));
+			pc +=2;
 			break;
 
 			//Now a fair amount of cases for our 8XXX series
@@ -144,21 +145,25 @@ public class CPU {
 			case 0x0006: //8XY6 bit shift Vx by on. Vf is set to least significant bit of Vx before shift
 				V[0xF] = (char) ((V[((opcode & 0x0F00)>>8)]) & 0x1);
 				V[((opcode & 0x0F00)>>8)] = (char) ((V[((opcode & 0x0F00)>>8)])>>1);
+				pc+=2;
 				break;
 
 			case 0x0007: //8XY7 Vx = Vy - Vx Set Vf to 0 when there is a borrow
 				//Substraction and if statement in here
+				pc+=2;
 				break;
 
 			case 0x000E: //8XYE Shifts Vx left by one. Vf is set to most significant bit prior to shift
 				V[0xF] = (char) (((V[((opcode & 0x0F00)>>8)]) & 0x80)>>8);
 				V[((opcode & 0x0F00)>>8)] = (char) ((V[((opcode & 0x0F00)>>8)])<<1);
+				pc+=2;
 				break;
 
 			default:
 				System.out.println("Unknown opcode at 0x8000" + opcode);
 
 			}
+			break;
 
 		case 0x9000: //9XY0 Skips the next instruction if Vx!=Vy
 			if(V[((opcode & 0x0F00)>>8)] != V[((opcode & 0x00F0) >> 4)]){
@@ -188,7 +193,7 @@ public class CPU {
 		case 0xD000: //DXYN Draws a sprite at VX, VY that is 8 pixels wide and N pixels high
 			//More to come
 			break;
-			
+		/*	
 		case 0xE000: //Two 0xE000 opcodes here, time for a deeper level of case
 			switch(opcode & 0x000F){
 			
@@ -216,9 +221,72 @@ public class CPU {
 				System.out.println("Unknown Opcode [0xE000] : 0x" + opcode);
 			
 			}
+			break;
+			*/
 			
 		case 0xF000:
-			//Loads in here we'll need another case statement
+			switch (opcode & 0x00FF)
+			{
+			case 0x0007: //FX07 Sets Vx to the Value of the delay timer
+				V[((opcode & 0x0F00)>>8)] = delay_timer;
+				pc+=2;
+				break;
+				
+			case 0x000A: //FX0A A key press is awaited and then stored at Vx. All instruction halted until key press
+				//While loop here waiting for key press
+				//while(KEY_NOT_PRESSED){
+					//GET_KEY_PRESS
+				//}				
+				//V[((opcode & 0x0F00)>>8)] =
+				pc+=2;				
+				break;
+				
+			case 0x0015: //FX15 Set delay timer to Vx
+				delay_timer = V[((opcode & 0x0F00)>>8)];
+				pc+=2;
+				break;
+				
+			case 0x0018: //FX18 Set the sound timer to Vx
+				sound_timer = V[((opcode & 0x0F00)>>8)];
+				pc+=2;
+				break;
+			
+			case 0x001E: //FX1E Add Vx to I
+				I = (short) (I + V[((opcode & 0x0F00)>>8)]);
+				pc+=2;
+				break;
+				
+			case 0x0029: //FX29 Set I to the location of the sprite for the character in Vx
+				//I = 
+				pc+=2;
+				break;
+			
+			case 0x0033: //FX33 Decimal representation of VX, place the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
+				memory[I]     = (char) (V[(opcode & 0x0F00) >> 8] / 100);
+				memory[I + 1] = (char) ((V[(opcode & 0x0F00) >> 8] / 10) % 10);
+				memory[I + 2] = (char) ((V[(opcode & 0x0F00) >> 8] % 100) % 10);
+				pc+=2;
+				break;
+				
+			case 0x0055: //FX55 Stores V[0] to V[x] in memory starting at address i
+				//for(int j=0; j<x+1; j++){
+					//Memory[I+j] = V[j]; 
+				//}
+				//Something like that
+				pc+=2;
+				break;
+				
+			case 0x0065: //FX65 Fills V[0] to V[x] with values from memory begining at I
+				//for(int j=0; j<((opcode&0x0F00)>>8)+1; j++){
+					//V[j] = Memory[I + j];
+				//}
+				pc+=2;
+				break;
+			
+			default:
+				System.out.println("Unknown Opcode [0xF000" + opcode);
+			
+			}
 			break;
 		
 		case 0x0000:
@@ -241,7 +309,7 @@ public class CPU {
 				System.out.println("Unknown Opcode [0x0000]: 0x" + opcode);
 			
 			}
-			
+			break;
 			
 		default:
 			System.out.println("Unknown OpCode at 0x" + opcode);
