@@ -33,6 +33,8 @@ public class CPU {
 		for(int i=0; i<80; i++){
 			memory[i]= FontSet.getFontSetEntry(i);
 		}
+		//initialise graphics as well
+		
 	}
 
 	//Emulate cycle
@@ -130,26 +132,31 @@ public class CPU {
 				pc +=2;
 				break;
 
-			case 0x0005: //8XY5 Vy is subtracted from Vx. Set VF=1 when there is a borrow
-				//Some condition needed here to check for the borrow
-				if(){
-					V[0xF] = 1;
+			case 0x0005: //8XY5 Vy is subtracted from Vx. Set VF=0 when there is a borrow
+				if(V[(opcode & 0x00F0) >> 4] > V[(opcode & 0x0F00) >> 8]){
+					V[0xF] = 0;
 				}
 				else{
-					V[0xF] = 0;
+					V[0xF] = 1;
 				}
 				V[((opcode & 0x0F00)>>8)] = (char) (V[((opcode & 0x0F00)>>8)] - V[((opcode & 0x00F0)>>4)]);
 				pc +=2;
 				break;
 
-			case 0x0006: //8XY6 bit shift Vx by on. Vf is set to least significant bit of Vx before shift
+			case 0x0006: //8XY6 bit shift Vx by one. Vf is set to least significant bit of Vx before shift
 				V[0xF] = (char) ((V[((opcode & 0x0F00)>>8)]) & 0x1);
 				V[((opcode & 0x0F00)>>8)] = (char) ((V[((opcode & 0x0F00)>>8)])>>1);
 				pc+=2;
 				break;
 
 			case 0x0007: //8XY7 Vx = Vy - Vx Set Vf to 0 when there is a borrow
-				//Substraction and if statement in here
+				if(V[(opcode & 0x0F00) >> 8] > V[(opcode & 0x00F0) >> 4]){
+					V[0xF] = 0;
+				}
+				else{
+					V[0xF] = 1;
+				}
+				V[((opcode & 0x0F00)>>8)] =  (char) (V[((opcode & 0x00F0)>>4)] - V[((opcode & 0x0F00)>>8)]);
 				pc+=2;
 				break;
 
@@ -176,12 +183,10 @@ public class CPU {
 
 		case 0xA000: //ANNN Sets I to the address NNN
 			I = (short) (opcode & 0x0FFF);
-			//Increase program counter to next pair of 2 bits
 			pc += 2;
 			break;
 
 		case 0xB000: //BNNN Jumps to address NNN +V0
-			//This is WRONG
 			pc = (short) ((opcode & 0x0FFF) + V[0]);			
 			break;
 
@@ -189,14 +194,35 @@ public class CPU {
 			V[((opcode & 0x0F00)>>8)] = (char) (((opcode & 0x00FF) | (0+ (int)(Math.random() * ((255-0) + 1))))); 
 			pc+= 2;
 			break;
-		
+
 		case 0xD000: //DXYN Draws a sprite at VX, VY that is 8 pixels wide and N pixels high
-			//More to come
+			short x = (short) V[(opcode & 0x0F00) >> 8];
+			short y = (short) V[(opcode & 0x00F0) >> 4];
+			short height = (short) (opcode & 0x000F);
+			short pixel;
+
+			V[0xF] = 0;
+			for (int yline = 0; yline < height; yline++)
+			{
+				pixel = (short) memory[I + yline];
+				for(int xline = 0; xline < 8; xline++)
+				{
+					if((pixel & (0x80 >> xline)) != 0)
+					{
+						if(gfx[(x + xline + ((y + yline) * 64))] == 1){
+							V[0xF] = 1;
+						}                              
+						gfx[x + xline + ((y + yline) * 64)] ^= 1;
+					}
+				}
+			}
+			drawFlag = true;
+			pc += 2;
 			break;
-		/*	
+
 		case 0xE000: //Two 0xE000 opcodes here, time for a deeper level of case
 			switch(opcode & 0x000F){
-			
+
 			case 0x000E: //EX9E Skips the next instruction if the key at Vx is pressed
 				if(){
 					pc+=4;
@@ -204,9 +230,8 @@ public class CPU {
 				else{
 					pc+=2;
 				}
-				
 				break;
-				
+
 			case 0x0001: //EXA1 Skips the next instruction if the key stored at Vx isn't pressed
 				if(){
 					pc+=4;
@@ -214,16 +239,14 @@ public class CPU {
 				else{
 					pc+=2;
 				}
-				
 				break;
-			
+
 			default:
 				System.out.println("Unknown Opcode [0xE000] : 0x" + opcode);
-			
+
 			}
 			break;
-			*/
-			
+
 		case 0xF000:
 			switch (opcode & 0x00FF)
 			{
@@ -231,64 +254,64 @@ public class CPU {
 				V[((opcode & 0x0F00)>>8)] = delay_timer;
 				pc+=2;
 				break;
-				
+
 			case 0x000A: //FX0A A key press is awaited and then stored at Vx. All instruction halted until key press
 				//While loop here waiting for key press
 				//while(KEY_NOT_PRESSED){
-					//GET_KEY_PRESS
+				//GET_KEY_PRESS
 				//}				
 				//V[((opcode & 0x0F00)>>8)] =
 				pc+=2;				
 				break;
-				
+
 			case 0x0015: //FX15 Set delay timer to Vx
 				delay_timer = V[((opcode & 0x0F00)>>8)];
 				pc+=2;
 				break;
-				
+
 			case 0x0018: //FX18 Set the sound timer to Vx
 				sound_timer = V[((opcode & 0x0F00)>>8)];
 				pc+=2;
 				break;
-			
+
 			case 0x001E: //FX1E Add Vx to I
 				I = (short) (I + V[((opcode & 0x0F00)>>8)]);
 				pc+=2;
 				break;
-				
+
 			case 0x0029: //FX29 Set I to the location of the sprite for the character in Vx
-				//I = 
+				I = (short) (V[(opcode & 0x0F00) >> 8] * 0x5);
 				pc+=2;
 				break;
-			
+
 			case 0x0033: //FX33 Decimal representation of VX, place the hundreds digit in memory at location in I, the tens digit at location I+1, and the ones digit at location I+2
 				memory[I]     = (char) (V[(opcode & 0x0F00) >> 8] / 100);
 				memory[I + 1] = (char) ((V[(opcode & 0x0F00) >> 8] / 10) % 10);
 				memory[I + 2] = (char) ((V[(opcode & 0x0F00) >> 8] % 100) % 10);
 				pc+=2;
 				break;
-				
+
 			case 0x0055: //FX55 Stores V[0] to V[x] in memory starting at address i
 				//for(int j=0; j<x+1; j++){
-					//Memory[I+j] = V[j]; 
+				//Memory[I+j] = V[j]; 
 				//}
 				//Something like that
 				pc+=2;
 				break;
-				
+
 			case 0x0065: //FX65 Fills V[0] to V[x] with values from memory begining at I
 				//for(int j=0; j<((opcode&0x0F00)>>8)+1; j++){
-					//V[j] = Memory[I + j];
+				//V[j] = Memory[I + j];
 				//}
 				pc+=2;
 				break;
-			
+
 			default:
 				System.out.println("Unknown Opcode [0xF000" + opcode);
-			
+
 			}
 			break;
-		
+
 		case 0x0000:
 			//Now we need to compare the last four bits
 			switch (opcode & 0x000F)
@@ -307,10 +330,10 @@ public class CPU {
 
 			default:
 				System.out.println("Unknown Opcode [0x0000]: 0x" + opcode);
-			
+
 			}
 			break;
-			
+
 		default:
 			System.out.println("Unknown OpCode at 0x" + opcode);
 
