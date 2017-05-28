@@ -18,6 +18,7 @@ public class CPU {
 	private char delay_timer;
 	private char sound_timer;
 	private boolean drawFlag;
+	private char[] key;
 
 	//Constructor
 	public CPU(){
@@ -33,7 +34,8 @@ public class CPU {
 		for(int i=0; i<80; i++){
 			memory[i]= FontSet.getFontSetEntry(i);
 		}
-		//initialise graphics as well
+		gfx = new char[64 *32];
+		key = new char[16];
 		
 	}
 
@@ -43,7 +45,6 @@ public class CPU {
 		opcode = (short) (memory[pc] << 8 | memory[pc+1]);
 
 		//Decode Opcode & Execute Opcode
-		//At the moment this is set-up as a case structure perhaps a better way?
 		//Just check the first four bits for our cases
 		switch(opcode & 0xF000){
 
@@ -318,7 +319,9 @@ public class CPU {
 			{
 			//This case below has a last 4 bits of 0 and first four of zero
 			case 0x0000: // 0x00E0: Clear Screen
-				//Something here to clear the screen
+				for(int i=0; i<gfx.length; i++){
+					gfx[i] = 0x0;
+				}
 				drawFlag = true;
 				break;
 
