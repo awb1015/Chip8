@@ -1,4 +1,4 @@
-//Chip8 has 2-byte Op-codes which works well for a char
+
 import java.util.Stack;
 
 public class CPU {
@@ -223,9 +223,10 @@ public class CPU {
 
 		case 0xE000: //Two 0xE000 opcodes here, time for a deeper level of case
 			switch(opcode & 0x000F){
-
+			
+			
 			case 0x000E: //EX9E Skips the next instruction if the key at Vx is pressed
-				if(){
+				if(key[V[(opcode & 0x0F00) >> 8]] != 0){
 					pc+=4;
 				}
 				else{
@@ -234,13 +235,14 @@ public class CPU {
 				break;
 
 			case 0x0001: //EXA1 Skips the next instruction if the key stored at Vx isn't pressed
-				if(){
+				if(key[V[(opcode & 0x0F00) >> 8]] == 0){
 					pc+=4;
 				}
 				else{
 					pc+=2;
 				}
 				break;
+				
 
 			default:
 				System.out.println("Unknown Opcode [0xE000] : 0x" + opcode);
@@ -258,10 +260,17 @@ public class CPU {
 
 			case 0x000A: //FX0A A key press is awaited and then stored at Vx. All instruction halted until key press
 				//While loop here waiting for key press
-				//while(KEY_NOT_PRESSED){
-				//GET_KEY_PRESS
-				//}				
-				//V[((opcode & 0x0F00)>>8)] =
+				boolean keyPress = false;
+				for(int i=0; i<key.length; i++){
+					if(key[i]!=0){
+						V[(opcode & 0x0F00) >> 8] = (char) i;
+						keyPress = true;
+					}
+				}
+				//If there's no key press we return without iterating the program counter
+				if(!keyPress){
+					return;
+				}
 				pc+=2;				
 				break;
 
@@ -293,17 +302,18 @@ public class CPU {
 				break;
 
 			case 0x0055: //FX55 Stores V[0] to V[x] in memory starting at address i
-				//for(int j=0; j<x+1; j++){
-				//Memory[I+j] = V[j]; 
-				//}
-				//Something like that
+				for(int i=0; i<=((opcode & 0x0F00)>>8); i++){
+					memory[I + i] = V[i];
+				}
+				I = (short) (I + ((opcode & 0x0F00)>>8) + 1);
 				pc+=2;
 				break;
 
 			case 0x0065: //FX65 Fills V[0] to V[x] with values from memory begining at I
-				//for(int j=0; j<((opcode&0x0F00)>>8)+1; j++){
-				//V[j] = Memory[I + j];
-				//}
+				for(int i=0; i<= ((opcode & 0x0F00)>>8); i++){
+					V[i] = memory[I +i];
+				}
+				I = (short) (I + ((opcode & 0x0F00)>>8) + 1);
 				pc+=2;
 				break;
 
@@ -317,7 +327,7 @@ public class CPU {
 			//Now we need to compare the last four bits
 			switch (opcode & 0x000F)
 			{
-			//This case below has a last 4 bits of 0 and first four of zero
+			
 			case 0x0000: // 0x00E0: Clear Screen
 				for(int i=0; i<gfx.length; i++){
 					gfx[i] = 0x0;
@@ -366,5 +376,5 @@ public class CPU {
 	public void setKeys(){
 
 	}
-
+	
 }
