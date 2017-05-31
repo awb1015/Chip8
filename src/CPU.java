@@ -1,5 +1,6 @@
 
 import java.util.Stack;
+import java.io.*;
 
 public class CPU {
 
@@ -36,7 +37,8 @@ public class CPU {
 		}
 		gfx = new char[64 *32];
 		key = new char[16];
-		
+		//Hacky way to load our rom for now
+		loadinMem();
 	}
 
 	//Emulate cycle
@@ -377,4 +379,28 @@ public class CPU {
 
 	}
 	
+	public char getPixel(int i){
+		return gfx[i];
+	}
+	
+	public void loadinMem(){
+		//Fixed location and hacky loader
+		try(InputStream inputstream = new FileInputStream("c:\\c8roms\\MAZE"))
+		{
+			char data = (char) inputstream.read();
+			int j=0;
+			int i;
+			//Hacky way to stop stream for now
+			while((i = inputstream.read()) != -1){
+				//Rom location begins at Hex 200 or dec 512
+				memory[512+j]= data;
+				j++;
+			}
+			inputstream.close();
+			System.out.println("Rom Loaded");
+		}
+		catch(IOException ex){
+			System.out.println("Error Loading Rom");
+		}
+	}
 }

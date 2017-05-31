@@ -32,16 +32,17 @@ public class GameLoop {
 
 	public static void drawGraphics(){
 		//Simple printing for now
-		/*
-		//Some kind of accessor needed to get our gfx[]
-		for(int i=0; i<9999;i++){
+		for(int i=0; i<2048; i++){
 			if(i%64==0){
-				System.out.println(""+);
+				System.out.println();
+			}
+			if(myChip8.getPixel(i)!=0){
+				System.out.print("X");
 			}
 			else{
-				System.out.print(""+ );
+				System.out.print(" ");
 			}
-		}*/
+		}
 	}
 	
 
