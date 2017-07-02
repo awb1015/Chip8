@@ -35,7 +35,7 @@ public class CPU {
 		for(int i=0; i<80; i++){
 			memory[i]= FontSet.getFontSetEntry(i);
 		}
-		gfx = new char[64 *32];
+		gfx = new char[64*32];
 		key = new char[16];
 		//Hacky way to load our rom for now
 		loadinMem();
@@ -45,6 +45,7 @@ public class CPU {
 	public void emulateCycle(){
 		//Fetch Opcode (not sure this is OK with type cast)
 		opcode = (short) (memory[pc] << 8 | memory[pc+1]);
+		System.out.println(String.format("0x%08X", opcode));
 
 		//Decode Opcode & Execute Opcode
 		//Just check the first four bits for our cases
@@ -89,7 +90,7 @@ public class CPU {
 			break;
 
 		case 0x6000: //6XNN Sets Vx to NN
-			V[((opcode & 0x0F00) >> 8)] =(char) (opcode & 0x00FF);
+			V[((opcode & 0x0F00) >> 8)] = (char)(opcode & 0x00FF);
 			pc+=2;
 			break;
 
@@ -335,7 +336,9 @@ public class CPU {
 					gfx[i] = 0x0;
 				}
 				drawFlag = true;
+				pc+=2;
 				break;
+				
 
 			case 0x000E: // 0x00EE : Returns from subroutine
 				//We need to restore address value from the stack
@@ -385,7 +388,7 @@ public class CPU {
 	
 	public void loadinMem(){
 		//Fixed location and hacky loader
-		try(InputStream inputstream = new FileInputStream("c:\\c8roms\\MAZE"))
+		try(InputStream inputstream = new FileInputStream("c:\\c8roms\\PONG"))
 		{
 			char data = (char) inputstream.read();
 			int j=0;

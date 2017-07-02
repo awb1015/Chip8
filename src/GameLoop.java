@@ -36,12 +36,22 @@ public class GameLoop {
 			if(i%64==0){
 				System.out.println();
 			}
-			if(myChip8.getPixel(i)!=0){
+			if(myChip8.getPixel(i)!='\u0000'){
 				System.out.print("X");
 			}
 			else{
 				System.out.print(" ");
 			}
+			
+		}
+		System.out.println("graphics updated?");
+		try        
+		{
+		    Thread.sleep(1000);
+		} 
+		catch(InterruptedException ex) 
+		{
+		    Thread.currentThread().interrupt();
 		}
 	}
 	
