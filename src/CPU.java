@@ -45,7 +45,7 @@ public class CPU {
 	public void emulateCycle(){
 		//Fetch Opcode (not sure this is OK with type cast)
 		opcode = (short) (memory[pc] << 8 | memory[pc+1]);
-		System.out.println(String.format("0x%08X", opcode));
+		System.out.println(String.format("0x%04X", opcode));
 
 		//Decode Opcode & Execute Opcode
 		//Just check the first four bits for our cases
@@ -376,6 +376,10 @@ public class CPU {
 		//Simple return statement to allow for things to play nicely
 		return drawFlag;
 	}
+	
+	public void setDrawFlag(boolean drawFlag){
+		drawFlag = this.drawFlag;
+	}
 
 	//Set our keys here
 	public void setKeys(){
@@ -386,9 +390,13 @@ public class CPU {
 		return gfx[i];
 	}
 	
+	public char[] getGraphicsMatrix(){
+		return gfx;
+	}
+	
 	public void loadinMem(){
 		//Fixed location and hacky loader
-		try(InputStream inputstream = new FileInputStream("c:\\c8roms\\PONG"))
+		try(InputStream inputstream = new FileInputStream("c:\\c8roms\\TETRIS"))
 		{
 			char data = (char) inputstream.read();
 			int j=0;

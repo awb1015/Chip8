@@ -1,11 +1,12 @@
 
 public class GameLoop {
 	//Declare our CPU object
-	static CPU myChip8; 
+	static CPU myChip8;
+	static Display myDisplay;
 
 	public static void main(String[] argc){
 		//Set up Graphics
-
+		myDisplay = new Display();
 		//Set up Input
 
 		//Initialize system
@@ -31,7 +32,9 @@ public class GameLoop {
 	}
 
 	public static void drawGraphics(){
-		//Simple printing for now
+		//Attempt at a real display
+		myDisplay.updateDisplay(myChip8.getGraphicsMatrix());		
+		//And also simple printing for now
 		for(int i=0; i<2048; i++){
 			if(i%64==0){
 				System.out.println();
@@ -47,12 +50,13 @@ public class GameLoop {
 		System.out.println("graphics updated?");
 		try        
 		{
-		    Thread.sleep(1000);
+		    Thread.sleep(100);
 		} 
 		catch(InterruptedException ex) 
 		{
 		    Thread.currentThread().interrupt();
 		}
+		myChip8.setDrawFlag(false);
 	}
 	
 
