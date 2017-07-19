@@ -1,11 +1,16 @@
 import java.awt.image.BufferedImage;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class Display {
 	private static int width;
 	private static int height;
 	private int type;
 	private static BufferedImage image;
+	private static JLabel label;
 	
 	//Constructor
 	public Display(){
@@ -15,6 +20,8 @@ public class Display {
 		int type = BufferedImage.TYPE_INT_ARGB;
 
 		BufferedImage image = new BufferedImage(width, height, type);
+		Icon icon = new ImageIcon(image);
+		JLabel label = new JLabel(icon);
 
 		int color = 255; // RGBA value, each component in a byte
 
@@ -24,13 +31,13 @@ public class Display {
 		    }
 		}
 		JFrame frame = new JFrame();
-		frame.getContentPane().add(image);
+		frame.getContentPane().add(label);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.setSize(width, height);
 	    frame.setVisible(true);
 	}
 	
-	public void updateDisplay(char[] gfx){
+	public void updateDisplay(byte[] gfx){
 		for(int x = 0; x < width; x++) {
 		    for(int y = 0; y < height; y++) {
 		        if(gfx[(x*(y+1))]!= 0){
@@ -43,6 +50,7 @@ public class Display {
 		        }
 		    }
 		}
+		
 	}
 
 }

@@ -35,19 +35,21 @@ public class GameLoop {
 		//Attempt at a real display
 		myDisplay.updateDisplay(myChip8.getGraphicsMatrix());		
 		//And also simple printing for now
-		for(int i=0; i<2048; i++){
-			if(i%64==0){
-				System.out.println();
-			}
-			if(myChip8.getPixel(i)!='\u0000'){
-				System.out.print("X");
-			}
-			else{
+		byte [] gfx = myChip8.getGraphicsMatrix();
+		for(int i=0; i<gfx.length; i++){
+			if(gfx[i]==0){
 				System.out.print(" ");
 			}
-			
+			else{
+				System.out.print("X");
+			}
+			if(i%64==0){
+				System.out.println("");
+			}
 		}
-		System.out.println("graphics updated?");
+		
+		System.out.println("graphics updated");
+
 		try        
 		{
 		    Thread.sleep(100);
