@@ -28,6 +28,15 @@ public class GameLoop {
 
 			//Check for inputs
 			myChip8.setKeys();
+			try        
+			{
+			    Thread.sleep(16);
+			} 
+			catch(InterruptedException ex) 
+			{
+				//This should never get thrown
+			    Thread.currentThread().interrupt();
+			}
 		}
 	}
 
@@ -46,17 +55,6 @@ public class GameLoop {
 			if(i%64==0){
 				System.out.println("");
 			}
-		}
-		
-		System.out.println("graphics updated");
-
-		try        
-		{
-		    Thread.sleep(100);
-		} 
-		catch(InterruptedException ex) 
-		{
-		    Thread.currentThread().interrupt();
 		}
 		myChip8.setDrawFlag(false);
 	}

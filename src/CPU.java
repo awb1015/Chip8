@@ -32,10 +32,11 @@ public class CPU {
 		I = 0x0;
 		delay_timer = 0;
 		sound_timer = 0;
+		drawFlag = false;
 		stack = new Stack<Character>();
 		//Load font set to memory
 		for(int i=0; i<80; i++){
-			memory[i]= FontSet.getFontSetEntry(i);
+			memory[0x50 & i]= (char)(FontSet.getFontSetEntry(i) & 0xFF);
 		}
 		gfx = new byte[64*32];
 		key = new byte[16];
@@ -47,7 +48,7 @@ public class CPU {
 	public void emulateCycle(){
 		//Fetch Opcode (not sure this is OK with type cast)
 		opcode = (char) (memory[pc] << 8 | memory[pc+1]);
-		System.out.println("The opcode is" + opcode);
+		System.out.println("The opcode is " +Integer.toHexString(opcode));
 
 		//Decode Opcode & Execute Opcode
 		//Just check the first four bits for our cases
@@ -403,7 +404,7 @@ public class CPU {
 		//Fixed location and hacky loader
 		DataInputStream input = null;
 		try {
-			input = new DataInputStream(new FileInputStream("c:\\c8roms\\TETRIS"));
+			input = new DataInputStream(new FileInputStream("c:\\c8roms\\INVADERS"));
 
 			int offset = 0;
 			while(input.available() > 0) {

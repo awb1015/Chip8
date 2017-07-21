@@ -1,6 +1,6 @@
 
 public final class FontSet {
-	static char[] chip8_fontset = {0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+	static int[] chip8_fontset = {0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
 			  0x20, 0x60, 0x20, 0x20, 0x70, // 1
 			  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
 			  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
@@ -22,12 +22,12 @@ public final class FontSet {
 	}
 	
 	//Accessor for entire array
-	public static char[] getFontSet(){
+	public static int[] getFontSet(){
 		return chip8_fontset;
 	}
 	
 	//Accessor for single array entry
-	public static char getFontSetEntry(int i){
+	public static int getFontSetEntry(int i){
 		return chip8_fontset[i];
 	}
 	

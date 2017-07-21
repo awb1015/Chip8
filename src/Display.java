@@ -15,8 +15,8 @@ public class Display {
 	//Constructor
 	public Display(){
 		//Set Display sizes
-		int width = 64;
-		int height = 32;
+		int width = 640;
+		int height = 320;
 		int type = BufferedImage.TYPE_INT_ARGB;
 
 		BufferedImage image = new BufferedImage(width, height, type);
@@ -35,12 +35,13 @@ public class Display {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.setSize(width, height);
 	    frame.setVisible(true);
+	    frame.setTitle("Chip 8 Emulator");
 	}
 	
 	public void updateDisplay(byte[] gfx){
-		for(int x = 0; x < width; x++) {
-		    for(int y = 0; y < height; y++) {
-		        if(gfx[(x*(y+1))]!= 0){
+		for(int i = 0; i < width; i++) {
+		    for(int j = 0; j < height; j++) {
+		        if(gfx[(i*(j+1))]!= 0){
 		        	//Then set pixel to white
 		        	image.setRGB(255, 255, 255);
 		        }
@@ -48,6 +49,7 @@ public class Display {
 		        	//Then the pixel is black
 		        	image.setRGB(0, 0, 0);
 		        }
+		        //Now draw rectangles 10x
 		    }
 		}
 		
