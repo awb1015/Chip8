@@ -388,7 +388,11 @@ public class CPU {
 	}
 
 	//Set our keys here
-	public void setKeys(){
+	public void setKeys(int[] keybuffer){
+		//update keyarray
+		for(int i=0; i<key.length; i++){
+			key[i] = (byte) keybuffer[i];
+		}
 
 	}
 
