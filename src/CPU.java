@@ -36,7 +36,7 @@ public class CPU {
 		stack = new Stack<Character>();
 		//Load font set to memory
 		for(int i=0; i<80; i++){
-			memory[0x50 & i]= (char)(FontSet.getFontSetEntry(i) & 0xFF);
+			memory[0x50 + i]= (char)(FontSet.getFontSetEntry(i) & 0xFF);
 		}
 		gfx = new byte[64*32];
 		key = new byte[16];
@@ -205,6 +205,7 @@ public class CPU {
 			break;
 
 		case 0xD000: //DXYN Draws a sprite at VX, VY that is 8 pixels wide and N pixels high
+			//THERE IS AN ERROR IN HERE ENCOUNTERED DURING BRIX
 			int x = V[(opcode & 0x0F00) >> 8];
 			int y = V[(opcode & 0x00F0) >> 4];
 			int height = opcode & 0x000F;
@@ -408,7 +409,7 @@ public class CPU {
 		//Fixed location and hacky loader
 		DataInputStream input = null;
 		try {
-			input = new DataInputStream(new FileInputStream("c:\\c8roms\\INVADERS"));
+			input = new DataInputStream(new FileInputStream("c:\\c8roms\\BRIX"));
 
 			int offset = 0;
 			while(input.available() > 0) {
