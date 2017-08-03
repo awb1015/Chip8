@@ -7,13 +7,8 @@ public class GameLoop {
 	static Display myDisplay;
 
 	public static void main(String[] argc){
-		//Set up Graphics
+		//Set up Graphics and input
 		myDisplay = new Display();
-		//Set up Input;
-
-
-		//Initialize system
-
 		//Initialize CPU Object
 		myChip8 = new CPU();
 		//Load Game

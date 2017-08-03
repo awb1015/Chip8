@@ -409,7 +409,7 @@ public class CPU {
 		//Fixed location and hacky loader
 		DataInputStream input = null;
 		try {
-			input = new DataInputStream(new FileInputStream("c:\\c8roms\\BRIX"));
+			input = new DataInputStream(new FileInputStream("c:\\c8roms\\INVADERS"));
 
 			int offset = 0;
 			while(input.available() > 0) {

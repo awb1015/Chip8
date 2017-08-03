@@ -32,10 +32,11 @@ public class Display extends JFrame implements KeyListener {
 		fillkeymap();
 		keyBuffer = new int[16];
 		//Now need a key listener as well
-		addKeyListener(this);
+
 		BufferedImage image = new BufferedImage(width, height, type);
 		Icon icon = new ImageIcon(image);
 		JLabel label = new JLabel(icon);
+
 
 		int color = 255; // RGBA value, each component in a byte
 
@@ -50,6 +51,8 @@ public class Display extends JFrame implements KeyListener {
 	    frame.setSize(width, height);
 	    frame.setVisible(true);
 	    frame.setTitle("Chip 8 Emulator");
+		frame.addKeyListener(this);
+		frame.setFocusable(true);
 	    repaint();
 	    pack();
 	}
@@ -59,15 +62,17 @@ public class Display extends JFrame implements KeyListener {
 		    for(int j = 0; j < height; j++) {
 		        if(gfx[(i*(j+1))]!= 0){
 		        	//Then set pixel to white
-		        	image.setRGB(255, 255, 255);
+		        	image.setRGB(i, j, 255);
 		        }
 		        else{
 		        	//Then the pixel is black
-		        	image.setRGB(0, 0, 0);
+		        	image.setRGB(i, j, 0);
 		        }
 		        //Now draw rectangles 10x
+
 		    }
 		}
+		repaint();
 		
 	}
 	
