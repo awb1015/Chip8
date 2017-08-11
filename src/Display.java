@@ -1,12 +1,9 @@
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 public class Display extends JFrame implements KeyListener {
 	/**
@@ -16,10 +13,9 @@ public class Display extends JFrame implements KeyListener {
 	private static int width;
 	private static int height;
 	private int type;
-	private static BufferedImage image;
-	private static JLabel label;
 	private HashMap<Character, Integer> keymap;
 	private static int[] keyBuffer;
+	public Graphics basicgfx = new Graphics();
 	
 	//Constructor
 	public Display(){
@@ -31,49 +27,17 @@ public class Display extends JFrame implements KeyListener {
 		keymap = new HashMap<>();		
 		fillkeymap();
 		keyBuffer = new int[16];
-		//Now need a key listener as well
-
-		BufferedImage image = new BufferedImage(width, height, type);
-		Icon icon = new ImageIcon(image);
-		JLabel label = new JLabel(icon);
-
-
-		int color = 255; // RGBA value, each component in a byte
-
-		for(int x = 0; x < width; x++) {
-		    for(int y = 0; y < height; y++) {
-		        image.setRGB(x, y, color);
-		    }
-		}
 		JFrame frame = new JFrame();
-		frame.getContentPane().add(label);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.setSize(width, height);
 	    frame.setVisible(true);
 	    frame.setTitle("Chip 8 Emulator");
 		frame.addKeyListener(this);
 		frame.setFocusable(true);
-	    repaint();
-	    pack();
-	}
-	
-	public void updateDisplay(byte[] gfx){
-		for(int i = 0; i < width; i++) {
-		    for(int j = 0; j < height; j++) {
-		        if(gfx[(i*(j+1))]!= 0){
-		        	//Then set pixel to white
-		        	image.setRGB(i, j, 255);
-		        }
-		        else{
-		        	//Then the pixel is black
-		        	image.setRGB(i, j, 0);
-		        }
-		        //Now draw rectangles 10x
-
-		    }
-		}
+		basicgfx = new Graphics();
+		frame.setContentPane(basicgfx);
 		repaint();
-		
+	    pack();
 	}
 	
 	private void fillkeymap(){

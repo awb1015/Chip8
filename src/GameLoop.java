@@ -40,7 +40,7 @@ public class GameLoop {
 
 	public static void drawGraphics(){
 		//Attempt at a real display
-		myDisplay.updateDisplay(myChip8.getGraphicsMatrix());		
+	
 		//And also simple printing for now
 		byte [] gfx = myChip8.getGraphicsMatrix();
 		for(int i=0; i<gfx.length; i++){
